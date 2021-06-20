@@ -1,0 +1,74 @@
+
+// Business Days Calculator
+namespace bdc {
+  var specialDates = {};
+
+  function init() {
+    var yearsLocationUrl = "./data";
+    try {
+      var yearsDirectories = ReadDirectory(yearsLocationUrl);
+    } catch(err) {
+      throw "Can't read directory: " + yearsLocationUrl;
+    }
+
+    var _yearDataUrl;
+    var _yearDataPath;
+    var _yearNumber;
+    var _yearJson;
+    var _yearData;
+
+    for (_yearDataUrl in yearsDirectories) {
+      try {
+        _yearDataPath = UrlToFilePath(_yearDataUrl);
+        _yearNumber = FileName(_yearDataPath).split(".")[0];
+        _yearJson = LoadFileData(_yearDataPath);
+
+        _yearData = ParseJson(_yearJson);
+        bdc.specialDates.SetProperty(_yearNumber, _yearData);
+      } catch(err) {
+        alert("Something went wrong while initializing bdc library: " + err);
+      }
+    }
+
+    return;
+  }
+
+  function getDayType(date) {
+    var weekDay = WeekDay(date);
+    var specialYear = null;
+    var specialMonth = null;
+    var specialDay = null;
+  
+    specialYear = bdc.specialDates.GetOptProperty(Year(date), null);
+    if (specialYear == null) {
+      throw "No such year data";
+    }
+  
+    specialMonth = specialYear[Month(date) - 1];
+    if (specialMonth != undefined && specialMonth != null) {
+      specialDay = specialMonth.GetOptProperty(Day(date), null);
+    }
+
+    return specialDay !== null ? specialDay : (weekDay === 0 || weekDay === 6) ? 1 : 0;;
+  }
+
+  function isWorkingDay(date) {
+    var specialDay = getDayType(date);
+    return specialDay !== 1;
+  }
+
+  function isNonWorkingDay(date) {
+    var specialDay = getDayType(date);
+    return specialDay === 2;
+  }
+
+  function isDayOff(date) {
+    var specialDay = getDayType(date);
+    return specialDay === 1;
+  }
+
+  function isShortenedDay(date) {
+    var specialDay = getDayType(date);
+    return specialDay === 3;
+  }
+}
