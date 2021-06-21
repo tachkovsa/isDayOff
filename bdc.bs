@@ -41,12 +41,12 @@ namespace bdc {
   
     specialYear = bdc.specialDates.GetOptProperty(Year(date), null);
     if (specialYear == null) {
-      throw "No such year data";
-    }
-  
-    specialMonth = specialYear[Month(date) - 1];
-    if (specialMonth != undefined && specialMonth != null) {
-      specialDay = specialMonth.GetOptProperty(Day(date), null);
+      alert("No such year data: " + specialYear);
+    } else {
+      specialMonth = specialYear[Month(date) - 1];
+      if (specialMonth != undefined && specialMonth != null) {
+        specialDay = specialMonth.GetOptProperty(Day(date), null);
+      }
     }
 
     return specialDay !== null ? specialDay : (weekDay === 0 || weekDay === 6) ? 1 : 0;;
@@ -70,5 +70,29 @@ namespace bdc {
   function isShortenedDay(date) {
     var specialDay = getDayType(date);
     return specialDay === 3;
+  }
+
+  function addWorkingDays(date, workingDays) {
+    workingDays = OptReal(workingDays, 0);
+    if (workingDays === 0) {
+      return date;
+    }
+
+    var resultDate = date;
+    var addedWorkingDays = bdc.isDayOff(resultDate) ? 0 : 1;
+
+    var sign = workingDays < 0 ? -1 : 1;
+    workingDays = sign == -1 ? workingDays * sign : workingDays;
+
+    while (addedWorkingDays <= workingDays) {
+      resultDate = bdc.addDays(resultDate, sign);
+      addedWorkingDays = bdc.isDayOff(resultDate) ? addedWorkingDays : addedWorkingDays + 1;
+    }
+
+    return resultDate;
+  }
+
+  function addDays(date, days) {
+    return OptReal(days, 0) == 0 ? date : DateOffset(date, (86400 * days));
   }
 }
