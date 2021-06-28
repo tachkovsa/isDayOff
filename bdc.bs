@@ -4,6 +4,8 @@ namespace bdc {
   var specialDates = {};
 
   function init() {
+    EnableLog("agent", true);
+
     var yearsLocationUrl = "./data";
     try {
       var yearsDirectories = ReadDirectory(yearsLocationUrl);
@@ -26,7 +28,7 @@ namespace bdc {
         _yearData = ParseJson(_yearJson);
         bdc.specialDates.SetProperty(_yearNumber, _yearData);
       } catch(err) {
-        alert("Something went wrong while initializing bdc library: " + err);
+        LogEvent("agent", "Something went wrong while initializing bdc library: " + err);
       }
     }
 
@@ -41,7 +43,7 @@ namespace bdc {
   
     specialYear = bdc.specialDates.GetOptProperty(Year(date), null);
     if (specialYear == null) {
-      alert("No such year data: " + specialYear);
+      LogEvent("agent", "No such year data: " + Year(date));
     } else {
       specialMonth = specialYear[Month(date) - 1];
       if (specialMonth != undefined && specialMonth != null) {
