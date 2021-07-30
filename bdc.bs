@@ -97,4 +97,10 @@ namespace bdc {
   function addDays(date, days) {
     return OptReal(days, 0) == 0 ? date : DateOffset(date, (86400 * days));
   }
+
+  function nextWorkingDay(date) {
+    date = date == undefined ? Date() : date;
+
+    return addDays(addWorkingDays(date, 1), -1);
+  }
 }
