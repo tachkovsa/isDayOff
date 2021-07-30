@@ -100,7 +100,6 @@ namespace bdc {
 
   function nextWorkingDay(date) {
     date = date == undefined ? Date() : date;
-
     return addDays(addWorkingDays(date, 1), -1);
   }
 }
